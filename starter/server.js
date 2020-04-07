@@ -10,7 +10,7 @@ const DB = process.env.DATABASE.replace(
 );
 mongoose
   .connect(process.env.DATABASE_LOCAL, {
-    //.connect(DB,{
+    // .connect(DB, {
     useNewUrlParser: true,
     useCreateIndex: true,
     useUnifiedTopology: true,
@@ -35,6 +35,20 @@ mongoose
 // 		console.log('ERROR ⚠', err);
 // 	});
 // console.log(process.env);
-app.listen(process.env.PORT, () => {
+const server = app.listen(process.env.PORT, () => {
   console.log(`App running on port ${process.env.PORT}...`);
+});
+process.on("unhandledRejection", err => {
+  console.log(err.name, err.message);
+  console.log(" UNHANDLE REJECTION 💣 shutting down...");
+  server.close(() => {
+    process.exit(1);
+  });
+});
+process.on("uncaughtException", err => {
+  console.log(err.name, err.message);
+  console.log(" UNCAUGHT EXCEPTION 💣 shutting down...");
+  server.close(() => {
+    process.exit(1);
+  });
 });
